@@ -1,0 +1,107 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isDriver() {
+      return isAuthenticated()
+        && getUserData().role == 'driver'
+        && getUserData().driverApproved == true;
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+
+      allow create: if isAuthenticated()
+                    && request.auth.uid == userId
+                    && request.resource.data.uid == userId
+                    && request.resource.data.role == 'passenger'
+                    && request.resource.data.createdAt == request.time
+                    && request.resource.data.keys().hasOnly([
+                      'uid',
+                      'nombre',
+                      'email',
+                      'numeroDocumento',
+                      'role',
+                      'createdAt'
+                    ]);
+
+      allow update: if isAuthenticated()
+                    && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data)
+                      .affectedKeys()
+                      .hasAny([
+                        'role',
+                        'driverApproved',
+                        'driverApprovalStatus',
+                        'saldoBilletera',
+                        'createdAt',
+                        'completedRidesCount',
+                        'referralCode',
+                        'referredByUid',
+                        'referralCodeUsed',
+                        'referralCreditBalance',
+                        'referralRewardGranted',
+                        'uid',
+                        'email',
+                        'numeroDocumento'
+                      ]);
+    }
+
+    match /driverApplications/{applicationId} {
+      allow read, write: if false;
+    }
+
+    match /referralCodes/{code} {
+      allow read, write: if false;
+    }
+
+    match /referralAccounts/{userId} {
+      allow read, write: if false;
+    }
+
+    match /referralRewardTransactions/{transactionId} {
+      allow read, write: if false;
+    }
+
+    match /rides/{rideId} {
+      allow read: if isAuthenticated();
+
+      allow update: if isDriver()
+                    && request.resource.data.updatedAt == request.time
+                    && (
+                      (
+                        resource.data.estado == 'BUSCANDO'
+                        && request.resource.data.estado == 'ACEPTADO'
+                        && resource.data.conductorUid == null
+                        && resource.data.conductorAsignado == null
+                        && request.resource.data.conductorUid == request.auth.uid
+                        && request.resource.data.conductorAsignado is string
+                        && request.resource.data.diff(resource.data)
+                          .affectedKeys().hasOnly([
+                            'estado',
+                            'conductorUid',
+                            'conductorAsignado',
+                            'updatedAt'
+                          ])
+                      )
+                      || (
+                        resource.data.estado == 'ACEPTADO'
+                        && request.resource.data.estado == 'EN_CURSO'
+                        && resource.data.conductorUid == request.auth.uid
+                        && request.resource.data.conductorUid == request.auth.uid
+                        && request.resource.data.diff(resource.data)
+                          .affectedKeys().hasOnly(['estado', 'updatedAt'])
+                      )
+                    );
+
+      allow delete: if false;
+    }
+  }
+}

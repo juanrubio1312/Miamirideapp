@@ -1,0 +1,27 @@
+name: passenger_app
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  cloud_firestore: ^7.1.0
+  cloud_functions: ^7.0.1
+  firebase_auth: ^7.0.1
+  firebase_core: ^5.1.0
+  flutter:
+    sdk: flutter
+  geolocator: ^14.1.2
+  google_maps_flutter: ^2.19.0
+  ride_services:
+    path: ../shared_service
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

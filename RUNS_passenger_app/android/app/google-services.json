@@ -1,0 +1,28 @@
+{
+  "project_info": {
+    "project_number": "78936996545",
+    "project_id": "miamirideapp",
+    "storage_bucket": "miamirideapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78936996545:android:f61eb6a297d6ea8ce3b240",
+        "android_client_info": {
+          "package_name": "Runs.proyect1"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLQNAAXUQbzxn80SQZ0buUSB1Pkjz4S_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,11 @@
+name: ride_services
+description: Shared Firestore ride coordination for the Passenger and Driver apps.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  cloud_firestore: ^7.1.0
+  cloud_functions: ^7.0.1
